@@ -55,12 +55,13 @@ exports.updateComment = (req,res,next) => {
 exports.deleteComment = (req,res,next) => {
     const id = req.params.id;
 
-    client.query("DELETE FROM commentaire WHERE id = $1", [id], (err, result) => {
+    client.query("DELETE FROM comment WHERE id_place = $1", [id], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Commentaire supprimé.",
             });
         } else{
+            console.log(err)
             return res.status(404).json({ 
                 message: "Le commentaire n'a pas pu être supprimé.",
                 error: err

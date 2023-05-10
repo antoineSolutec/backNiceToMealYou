@@ -40,7 +40,6 @@ exports.getRestaurantsByArrondissement = (req,res) => {
 exports.getRestaurantsOfLigne = (req,res) => {
     const query = "SELECT r.id,r.name,r.facade,r.comment,r.arrondissement,r.quality_price,r.note_deco,r.note_globale,r.tested,r.quality,r.type from restaurants r INNER JOIN station_in_place s ON s.id_place = r.id INNER JOIN ligne_in_station l ON l.name_station = s.name_station WHERE l.name_ligne = $1 AND r.id != $2"
     client.query(query, [req.params.ligne,req.query.idPlace], (err, result) => {
-        console.log(result.rows);
         if(!err){
             res.send(result.rows);
         } else{
@@ -71,7 +70,6 @@ exports.getBestRestaurants = (req,res) => {
     let tested = "false";
     if(request.tested)  tested = "true";
     const query = "SELECT * from restaurants WHERE tested =  " + tested + " ORDER BY " + request.type_note + " DESC limit 5";
-    // console.log(query);
     client.query(query, (err, result) => {
         if(!err){
             res.send(result.rows);
@@ -119,13 +117,14 @@ exports.addRestaurant = (req,res) => {
 
 //////////////////////////  Update  //////////////////////////
 exports.updateRestaurant = (req,res,next) => {
-    client.query("UPDATE restaurants SET name = $2, comment = $3, arrondissement = $4, quality_price = $5,note_deco = $6, note_globale = $7, tested = $8, quality = $9, type = $10, the_fork = $11, note_quantity = $12 WHERE id = $1", 
-    [req.body.id,req.body.name,req.body.facade,req.body.comment,req.body.arrondissement,req.body.quality_price,req.body.note_deco,req.body.note_globale,req.body.tested,req.body.quality,req.body.place,req.body.type,req.body.the_fork,req.body.note_quantity], (err, result) => {
+    client.query("UPDATE restaurants SET name = $2, facade = $3, comment = $4, arrondissement = $5, quality_price = $6,note_deco = $7, note_globale = $8, tested = $9, quality = $10, type = $11, the_fork = $12, note_quantity = $13, price = $14 WHERE id = $1", 
+    [req.body.id,req.body.name,req.body.facade,req.body.comment,req.body.arrondissement,req.body.quality_price,req.body.note_deco,req.body.note_globale,req.body.tested,req.body.quality, req.body.type,req.body.the_fork,req.body.note_quantity, req.body.price], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Restaurant modifié avec succès.",
             });
         } else{
+            console.log(err)
             return res.status(404).json({ 
                 message: "Le restaurant n'a pas pu être modifié." ,
                 error: err

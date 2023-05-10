@@ -49,13 +49,14 @@ exports.addAddress = (req,res) => {
 
 //////////////////////////  Update  //////////////////////////
 exports.updateAddress = (req,res,next) => {
-    client.query("UPDATE address SET address = $2, code_postal = $3, WHERE id = $1", 
+    client.query("UPDATE address SET address = $2, code_postal = $3 WHERE id = $1", 
     [req.body.id,req.body.address,req.body.code_postal], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Adresse modifiée avec succès.",
             });
         } else{
+            console.log(err)
             return res.status(404).json({ 
                 message: "L'adresse n'a pas pu être modifiée." ,
                 error: err

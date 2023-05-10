@@ -119,13 +119,14 @@ exports.addBar = (req,res) => {
 
 //////////////////////////  Update  //////////////////////////
 exports.updateBar = (req,res,next) => {
-    client.query("UPDATE Bar SET name = $2, comment = $3, arrondissement = $4, quality_price = $5,note_deco = $6, note_globale = $7, tested = $8, quality = $9, type = $10   WHERE id = $1", 
-    [req.body.id,req.body.name,req.body.facade,req.body.comment,req.body.arrondissement,req.body.quality_price,req.body.note_deco,req.body.note_globale,req.body.tested,req.body.quality,req.body.type], (err, result) => {
+    client.query("UPDATE Bar SET name = $2, facade = $11, comment = $3, arrondissement = $4, quality_price = $5,note_deco = $6, note_globale = $7, tested = $8, quality = $9, type = $10   WHERE id = $1", 
+    [req.body.id,req.body.name,req.body.comment,req.body.arrondissement,req.body.quality_price,req.body.note_deco,req.body.note_globale,req.body.tested,req.body.quality,req.body.type,req.body.facade], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Bar modifié avec succès.",
             });
         } else{
+            console.log(err);
             return res.status(404).json({ 
                 message: "Le bar n'a pas pu être modifié." ,
                 error: err

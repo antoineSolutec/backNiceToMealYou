@@ -2,10 +2,11 @@ const client = require("../server");
 
 //////////////////////////  Get  //////////////////////////
 exports.getStationsOfUser = (req,res) => {
-    client.query("SELECT * from station _of_user WHERE name_station = $1", [req.params.name] , (err, result) => {
+    client.query("SELECT * from station_of_user WHERE id_user = $1", [req.params.id] , (err, result) => {
         if(!err){
             res.send(result.rows);
         } else{
+            console.log(err)
             return res.status(404).json({ 
                 message: "Impossible de trouver les stations." ,
                 error: err
@@ -36,7 +37,7 @@ exports.addStationOfUser = (req,res) => {
 exports.deleteStationOfUser = (req,res,next) => {
     const id = req.params.id;
 
-    client.query("DELETE FROM station_of_user WHERE id = $1", [id], (err, result) => {
+    client.query("DELETE FROM station_of_user WHERE id_user = $1", [id], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Station supprimée.",

@@ -10,6 +10,10 @@ module.exports = (req, res, next) => {
        };
 	next();
    } catch(error) {
-       res.status(404).json({ error });
+        console.log(error);
+       res.send({
+        error: true,
+        message: "Token expiré"
+       })
    }
 };

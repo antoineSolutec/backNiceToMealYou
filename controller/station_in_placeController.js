@@ -2,7 +2,7 @@ const client = require("../server");
 
 //////////////////////////  Get  //////////////////////////
 exports.getStationsOfPlace = (req,res) => {
-    client.query("SELECT * from station_in_place WHERE id_place = $1", [req.params.id], (err, result) => {
+    client.query("SELECT name_station from station_in_place WHERE id_place = $1", [req.params.id], (err, result) => {
         if(!err){
             res.send(result.rows);
         } else{
@@ -38,7 +38,7 @@ exports.addStationForPlace = (req,res) => {
 exports.deleteStationInPlace = (req,res,next) => {
     const id = req.params.id;
 
-    client.query("DELETE FROM station_in_place WHERE id = $1", [id], (err, result) => {
+    client.query("DELETE FROM station_in_place WHERE id_place = $1", [id], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Station supprimée.",

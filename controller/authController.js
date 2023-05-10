@@ -1,5 +1,6 @@
 const client = require("../server");
 
+
 //////////////////////////  Get  //////////////////////////
 exports.getAllUsers = (req,res) => {
     client.query("SELECT * from users", (err, result) => {
@@ -20,42 +21,44 @@ exports.login = (req,res) => {
     const user = JSON.parse(req.query.user);
     client.query("SELECT * from users WHERE login = $1", [user.login], (err, result) => {
         if(!err && result.rowCount !== 0){
+            const id = result.rows[0].id;
+            const login = result.rows[0].login;
             bcrypt.compare(user.password, result.rows[0].password).then(valid => {
                 if (!valid) {
-                    return res.status(404).json({ message: 'Mot de passe incorrect' });
+                    return res.json({ message: 'Mot de passe incorrect', error: true });
+                } else{
+                    const params = { role: result.rows[0].role, user: user._id, id: id, login: login};
+                    res.status(200).json({
+                        params,
+                        token: jwt.sign(
+                            params,
+                            'Moussanko',
+                            { expiresIn: '24h' }
+                        )
+                    });
                 }
-                res.status(200).json({
-                    role: result.rows[0].role,
-                    img: result.rows[0].img,
-                    login: result.rows[0].login,
-                    id: result.rows[0].id,
-                    token: jwt.sign(
-                        { role: result.rows[0].role, user: user._id, img: result.rows[0].img },
-                        'Moussanko',
-                        { expiresIn: '24h' }
-                    )
-                });
+                
+                
             })
             .catch(error => res.status(500).json({ error }));
         }   else{
-            return res.status(404).json({ 
+            return res.json({ 
                 message: "Login incorrect." ,
-                error: err
+                error: true
             });
         }
     });
 }
 
 exports.loginWithToken = (req,res,next) => {
-    const token = req.query.token;
+    const token = req.body.token;
     if (token) {
       jwt.verify(token, 'Moussanko', function(err, decoded) {
           if (err) {
-              return res.status(404).json({"error": true, "message": 'Unauthorized access.' });
+            return res.send({"error": true, "message": 'Unauthorized access.' });
           } else {
             res.status(200).json({
                 "role": decoded.role,
-                "img": decoded.img,
                 "id": decoded.id,
                 "login": decoded.login
             });
@@ -66,11 +69,26 @@ exports.loginWithToken = (req,res,next) => {
     } else {
       // if there is no token
       // return an error
+      console.log(error)
       return res.status(403).send({
           "error": true,
           "message": 'No token provided.'
       });
     }
+}
+
+exports.getImageOfUser = (req,res) => {
+    client.query("SELECT img FROM users WHERE id = $1", [req.params.id], (err, result) => {
+        if(!err){
+            res.status(201).json(result.rows[0]);
+        } else{
+            console.log(err)
+            return res.status(404).json({ 
+                message: "L'utilisateur n'a pas pu être modifié." ,
+                error: err
+            });
+        }
+    });
 }
 
 
@@ -113,6 +131,61 @@ exports.updateUser = (req,res,next) => {
                 message: "Utilisateur modifié avec succès.",
             });
         } else{
+            return res.status(404).json({ 
+                message: "L'utilisateur n'a pas pu être modifié." ,
+                error: err
+            });
+        }
+    });
+}
+
+exports.modifyPassword = (req,res,next) => {
+    bcrypt.hash(req.body.password, 10).then(hash => {
+        const password = hash;
+        const id = req.body.id;
+        client.query("UPDATE users SET password = $2 WHERE id = $1", [id,password], (err, result) => {
+            if(!err){
+                res.status(201).json({
+                    message: "Utilisateur modifié avec succès.",
+                });
+            } else{
+                console.log(err);
+
+                return res.status(404).json({ 
+                    message: "L'utilisateur n'a pas pu être modifié." ,
+                    error: err
+                });
+            }
+        });
+    })
+}
+
+exports.modifyLogin = (req,res,next) => {
+    client.query("UPDATE users SET login = $2 WHERE id = $1", [req.body.id,req.body.login], (err, result) => {
+        if(!err){
+            res.status(201).json({
+                message: "Utilisateur modifié avec succès.",
+            });
+        } else{
+            console.log(err);
+
+            return res.status(404).json({ 
+                message: "L'utilisateur n'a pas pu être modifié." ,
+                error: err
+            });
+        }
+    });
+}
+
+exports.modifyImage = (req,res,next) => {
+    client.query("UPDATE users SET img = $2 WHERE id = $1", [req.body.id,req.body.img], (err, result) => {
+        if(!err){
+            res.status(201).json({
+                message: "Utilisateur modifié avec succès.",
+            });
+        } else{
+            console.log(err);
+
             return res.status(404).json({ 
                 message: "L'utilisateur n'a pas pu être modifié." ,
                 error: err

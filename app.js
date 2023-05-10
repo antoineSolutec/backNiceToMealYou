@@ -19,6 +19,7 @@ const stationRoutes = require("./router/stationRouter");
 const type_picturesRoutes = require("./router/type_picturesRouter");
 const usersRoutes = require("./router/authRouter");
 const bodyParser = require('body-parser');
+const customRoutes = require("./router/customRouter");
 
 
 const cors = require('cors');
@@ -47,3 +48,4 @@ app.use('/', station_in_placeRoutes);
 app.use('/', station_of_userRoutes);
 app.use('/', stationRoutes);
 app.use('/', type_picturesRoutes);
+app.use('/', customRoutes);

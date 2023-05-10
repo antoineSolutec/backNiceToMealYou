@@ -52,7 +52,7 @@ exports.addPictures = (req,res) => {
 exports.deletePictures = (req,res,next) => {
     const id = req.params.id;
 
-    client.query("DELETE FROM pictures WHERE id = $1", [id], (err, result) => {
+    client.query("DELETE FROM pictures WHERE id_place = $1", [id], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Image supprimée.",

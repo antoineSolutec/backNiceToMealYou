@@ -15,7 +15,7 @@ exports.getStationsOfLigne = (req,res) => {
 }
 
 exports.getLigneofStation = (req,res) => {
-    client.query("SELECT * from ligne_in_station WHERE name_station = $1", [req.params.station], (err, result) => {
+    client.query("SELECT name_ligne from ligne_in_station WHERE name_station = $1", [req.params.station], (err, result) => {
         if(!err){
             res.send(result.rows);
         } else{

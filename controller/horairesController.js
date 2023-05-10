@@ -49,7 +49,7 @@ exports.addHoraires = (req,res) => {
 
 //////////////////////////  Update  //////////////////////////
 exports.updateHoraires = (req,res,next) => {
-    client.query("UPDATE horaires SET day = $2, ouverture = $3, fermeture_midi = $4, ouverture_soir = $5, fermeture = $6 WHERE id_place = $1", 
+    client.query("UPDATE horaires SET day = $2, ouverture = $3, fermeture_midi = $4, ouverture_soir = $5, fermeture = $6 WHERE id = $1", 
     [req.body.id_place,req.body.day,req.body.ouverture,req.body.fermeture_midi,req.body.ouverture_soir,req.body.fermeture_soir], (err, result) => {
         if(!err){
             res.status(201).json({

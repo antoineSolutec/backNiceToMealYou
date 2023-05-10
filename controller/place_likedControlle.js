@@ -6,6 +6,7 @@ exports.getLikeOfUser = (req,res) => {
         if(!err){
             res.send(result.rows);
         } else{
+            console.log(err)
             return res.status(404).json({ 
                 message: "Impossible de trouver le lieu associé à l'utilisateur." ,
                 error: err
@@ -36,14 +37,15 @@ exports.addLike = (req,res) => {
 
 //////////////////////////  Delete  //////////////////////////
 exports.deleteLike = (req,res,next) => {
-    const id = req.params.id;
+    const infos = JSON.parse(req.query.infos);
 
-    client.query("DELETE FROM places_liked WHERE id = $1", [id], (err, result) => {
+    client.query("DELETE FROM places_liked WHERE id_place = $1 AND id_user = $2", [infos.id_place, infos.id_user], (err, result) => {
         if(!err){
             res.status(201).json({
                 message: "Like supprimé.",
             });
         } else{
+            console.log(err)
             return res.status(404).json({ 
                 message: "Le like n'a pas pu être supprimé.",
                 error: err

@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json({ limit: "100mb" });
 const auth = require('../shared/auth');
 
 
@@ -11,10 +11,10 @@ const auth = require('../shared/auth');
 
 
 
-router.get("/favorite/:id", auth, controller.getFavoritesTypeOfUser);
-router.post("/favorite", auth, jsonParser, controller.addFavoriteType);
-router.patch("/favorite", auth, jsonParser, controller.updateFavoriteType);
-router.delete("/favorite/:id", auth, controller.deleteFavoriteType);
+router.get("/like/:id", auth, controller.getFavoritesTypeOfUser);
+router.post("/like", auth, jsonParser, controller.addFavoriteType);
+router.patch("/like", auth, jsonParser, controller.updateFavoriteType);
+router.delete("/like/:id", auth, controller.deleteFavoriteType);
 
 
 module.exports = router;
