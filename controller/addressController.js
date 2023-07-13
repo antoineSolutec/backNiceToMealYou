@@ -27,6 +27,19 @@ exports.getAllAddress = (req,res) => {
     });
 }
 
+exports.getTypes = (req,res) => {
+    client.query("SELECT column_name,data_type FROM information_schema.columns WHERE table_name = 'address';", (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        } else{
+            return res.status(404).json({ 
+                message: "Impossible de trouver les restaurants." ,
+                error: err
+            });
+        }
+    });
+}
+
 
 
 //////////////////////////  Post  //////////////////////////

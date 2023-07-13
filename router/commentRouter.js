@@ -10,10 +10,14 @@ const auth = require('../shared/auth');
 
 
 
+router.get("/commentType", auth, controller.getTypes);
+router.get("/comment/:ids", auth, jsonParser, controller.getComment);
+router.get("/comment/points/:ids", auth, jsonParser, controller.getPoints);
 
-router.get("/comment/:id", auth, controller.getComment);
-router.post("/comment", auth, jsonParser, controller.addComment);
-router.patch("/comment", auth, jsonParser, controller.updateComment);
+router.get("/comment", auth, controller.getAllComments);
+
+router.post("/comment/restaurants", auth, jsonParser, controller.addCommentRestaurant);
+router.patch("/comment/restaurants", auth, jsonParser, controller.updateCommentRestaurant);
 router.delete("/comment/:id", auth, controller.deleteComment);
 
 

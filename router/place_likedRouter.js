@@ -6,8 +6,10 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json({ limit: "100mb" });
 const auth = require('../shared/auth');
 
-
+router.get("/place_likeType", auth, controller.getTypes);
 router.get("/place_like/:id", auth, controller.getLikeOfUser);
+router.get("/place_like", auth, controller.getAllLike);
+
 router.post("/place_like", auth, jsonParser, controller.addLike);
 router.delete("/place_like", auth, jsonParser, controller.deleteLike);
 

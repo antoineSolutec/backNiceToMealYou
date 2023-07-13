@@ -192,7 +192,13 @@ exports.getLignesOfPlace = (req,res) => {
     const query = "WITH stations AS(SELECT name_station FROM station_in_place WHERE id_place = $1)SELECT ligne_in_station.name_ligne FROM ligne_in_station,stations WHERE ligne_in_station.name_station = stations.name_station"
     client.query(query, [req.params.id], (err, result) => {
         if(!err){
-            res.send(result.rows);
+            let toSend = []
+            result.rows.forEach(element => {
+                toSend.push({
+                    name: element.name_ligne
+                });
+            });
+            res.send(toSend);
         } else{
             console.log(err);
             return res.status(404).json({ 

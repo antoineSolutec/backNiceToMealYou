@@ -10,7 +10,7 @@ const auth = require('../shared/auth');
 
 
 
-
+router.get("/horairesType", auth, controller.getTypes);
 router.get("/horaires/:id", auth, controller.getHorairesOfPlace);
 router.get("/horaires", auth, controller.getAllHoraires);
 router.post("/horaires", auth, jsonParser, controller.addHoraires);

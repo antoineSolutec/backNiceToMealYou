@@ -1,5 +1,18 @@
 const client = require("../server");
 
+exports.getTypes = (req,res) => {
+    client.query("SELECT column_name,data_type FROM information_schema.columns WHERE table_name = 'places_liked';", (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        } else{
+            return res.status(404).json({ 
+                error: err
+            });
+        }
+    });
+}
+
+
 //////////////////////////  Get  //////////////////////////
 exports.getLikeOfUser = (req,res) => {
     client.query("SELECT * from places_liked WHERE id_user = $1", [req.params.id], (err, result) => {
@@ -9,6 +22,19 @@ exports.getLikeOfUser = (req,res) => {
             console.log(err)
             return res.status(404).json({ 
                 message: "Impossible de trouver le lieu associé à l'utilisateur." ,
+                error: err
+            });
+        }
+    });
+}
+
+exports.getAllLike = (req,res) => {
+    client.query("SELECT * from places_liked", (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        } else{
+            console.log(err)
+            return res.status(404).json({ 
                 error: err
             });
         }

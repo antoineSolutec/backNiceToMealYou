@@ -1,5 +1,16 @@
 const client = require("../server");
 
+exports.getTypes = (req,res) => {
+    client.query("SELECT column_name,data_type FROM information_schema.columns WHERE table_name = 'users';", (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        } else{
+            return res.status(404).json({ 
+                error: err
+            });
+        }
+    });
+}
 
 //////////////////////////  Get  //////////////////////////
 exports.getAllUsers = (req,res) => {
@@ -42,6 +53,7 @@ exports.login = (req,res) => {
             })
             .catch(error => res.status(500).json({ error }));
         }   else{
+            console.log(err, result);
             return res.json({ 
                 message: "Login incorrect." ,
                 error: true
@@ -91,6 +103,24 @@ exports.getImageOfUser = (req,res) => {
     });
 }
 
+exports.getPlaceOfUser = (req,res) => {
+    client.query("SELECT id_place FROM user_list WHERE id_user = $1", [req.params.id], (err, result) => {
+        if(!err){
+            let ids = [];
+            result.rows.forEach(element => {
+                ids.push(element.id_place);
+            });
+            res.status(201).json(ids);
+        } else{
+            console.log(err)
+            return res.status(404).json({ 
+                message: "L'utilisateur n'a pas pu être modifié." ,
+                error: err
+            });
+        }
+    });
+}
+
 
 
 ////////////////////////  Post  //////////////////////////
@@ -116,6 +146,21 @@ exports.signup = (req,res) => {
         });
       })
       .catch(error => res.status(500).json({ error }));
+}
+exports.addPlaceOfUser = (req,res) => {
+    client.query("INSERT INTO user_list(id_user,id_place) Values ($1,$2)", [req.body.idUser,req.body.idPlace], (err, result) => {
+        if(!err){
+            res.status(201).json({
+                message: "Lieu ajouté avec succès.",
+            });
+        } else{
+            console.log(err)
+            return res.status(404).json({ 
+                message: "Le lieu n'a pas pu être ajouté." ,
+                error: err
+            });
+        }
+    });
 }
 
 ////////////////////////  Update  //////////////////////////
